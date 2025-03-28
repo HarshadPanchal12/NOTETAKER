@@ -1,0 +1,115 @@
+@keyframes neonTextGlow {
+    0% { text-shadow: 0 0 5px #00ffff, 0 0 10px #0088ff; }
+    50% { text-shadow: 0 0 10px #00ffff, 0 0 20px #0088ff; }
+    100% { text-shadow: 0 0 5px #00ffff, 0 0 10px #0088ff; }
+}
+
+@keyframes neonBoxGlow {
+    0% { box-shadow: 0 0 10px #00ffff; }
+    50% { box-shadow: 0 0 15px #0088ff; }
+    100% { box-shadow: 0 0 10px #00ffff; }
+}
+
+body {
+    font-family: 'Poppins', sans-serif;
+    background-color: #080808;
+    color: #00ffff;
+    text-align: center;
+    margin: 0;
+    padding: 0;
+}
+
+.container {
+    max-width: 700px;
+    margin: auto;
+    padding: 20px;
+    background: #121212;
+    border-radius: 15px;
+    box-shadow: 0px 0px 20px rgba(0, 255, 255, 0.5);
+    animation: neonBoxGlow 2s infinite alternate;
+}
+
+.neon-text {
+    color: #00ffff;
+    animation: neonTextGlow 2s infinite alternate;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    background: #1a1a1a;
+    padding: 15px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px #00ffff;
+}
+
+input, .textarea {
+    padding: 12px;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    background-color: #222;
+    color: #00ffff;
+    outline: none;
+}
+
+.textarea:empty:before {
+    content: attr(placeholder);
+    color: #00ffff;
+    opacity: 0.7;
+}
+
+button {
+    padding: 12px;
+    font-size: 16px;
+    font-weight: bold;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    background: linear-gradient(90deg, #00ffff, #0088ff);
+    color: #121212;
+    text-transform: uppercase;
+    transition: all 0.3s ease-in-out;
+}
+
+button:hover {
+    background: linear-gradient(90deg, #0088ff, #00ffff);
+    transform: scale(1.05);
+}
+
+.notes-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 15px;
+    margin-top: 20px;
+    padding: 10px;
+}
+
+.note-card {
+    background: #1a1a1a;
+    padding: 15px;
+    border-radius: 10px;
+    text-align: center;
+    box-shadow: 0 0 15px #00ffff;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    animation: neonBoxGlow 3s infinite alternate;
+}
+
+.note-card:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 20px #0088ff;
+}
+
+.note-card h3 {
+    color: #00ffff;
+    animation: neonTextGlow 2s infinite alternate;
+}
+
+.note-card strong {
+    font-weight: bold;
+}
+
+.hidden {
+    display: none;
+}

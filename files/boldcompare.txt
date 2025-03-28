@@ -1,0 +1,1 @@
+<strong>BOLD</strong>    bold

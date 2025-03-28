@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notes App</title>
+    <link rel="stylesheet" href="/stylesheets/style.css">
+    <style>
+        .toolbar select {
+            background: #121212;
+            color: #00ffff;
+            border: 2px solid #00ffff;
+            padding: 8px;
+            border-radius: 5px;
+            font-size: 14px;
+            cursor: pointer;
+        }
+        #description {
+            white-space: pre-wrap;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Notes Taking App</h2>
+        <form action="/add" method="POST">
+            <input type="text" name="title" placeholder="Enter note title" required>
+            <div class="toolbar">
+                <select id="bullet-type">
+                    <option value="• ">Bullet</option>
+                    <option value="1. ">Number</option>
+                    <option value="A. ">Alphabet</option>
+                </select>
+                <button type="button" onclick="insertBullet()">Insert</button>
+                <button type="button" onclick="formatText('bold')">Bold</button>
+            </div>
+            <div id="description" contenteditable="true" class="textarea" placeholder="Enter note description" required></div>
+            <input type="hidden" name="description" id="hidden-description">
+            <input type="hidden" name="formatting" id="formatting">
+            <button type="submit" onclick="prepareSubmit()">Add Note</button>
+        </form>
+
+        <div class="notes-grid">
+            <% notes.forEach(note => { %>
+                <div class="note-card">
+                    <h3 onclick="toggleDescription('<%= note.title %>')" style="cursor: pointer;"> <%= note.title %> </h3>
+                    <div id="desc-<%= note.title %>" class="hidden"><%- note.description %></div>
+                </div>
+            <% }); %>
+        </div>
+    </div>
+
+    <script>
+        let boldRanges = [];
+
+        function toggleDescription(title) {
+            let desc = document.getElementById('desc-' + title);
+            desc.classList.toggle('hidden');
+        }
+
+        function formatText(command) {
+            let textarea = document.getElementById('description');
+            let selection = window.getSelection();
+            if (selection.rangeCount) {
+                let range = selection.getRangeAt(0);
+                let start = range.startOffset;
+                let end = range.endOffset;
+                let text = textarea.textContent;
+
+                if (command === 'bold' && start !== end) {
+                    // Store the bold range
+                    boldRanges.push([start, end]);
+                    applyFormatting();
+                }
+            }
+        }
+
+        function applyFormatting() {
+            let textarea = document.getElementById('description');
+            let text = textarea.textContent;
+            let fragment = document.createDocumentFragment();
+            
+            let lastIndex = 0;
+            boldRanges.sort((a, b) => a[0] - b[0]).forEach(([start, end]) => {
+                // Add text before bold section
+                if (lastIndex < start) {
+                    fragment.appendChild(document.createTextNode(text.slice(lastIndex, start)));
+                }
+                // Add bold section
+                let strong = document.createElement('strong');
+                strong.textContent = text.slice(start, end);
+                fragment.appendChild(strong);
+                lastIndex = end;
+            });
+            // Add remaining text
+            if (lastIndex < text.length) {
+                fragment.appendChild(document.createTextNode(text.slice(lastIndex)));
+            }
+            
+            textarea.innerHTML = '';
+            textarea.appendChild(fragment);
+        }
+
+        function insertBullet() {
+            let textarea = document.getElementById('description');
+            let bulletType = document.getElementById('bullet-type').value;
+            document.execCommand('insertText', false, bulletType);
+        }
+
+        function prepareSubmit() {
+            let textarea = document.getElementById('description');
+            let hiddenDesc = document.getElementById('hidden-description');
+            let formatting = document.getElementById('formatting');
+            
+            hiddenDesc.value = textarea.textContent;
+            formatting.value = JSON.stringify(boldRanges);
+        }
+
+        // Prevent default paste to keep plain text
+        document.getElementById('description').addEventListener('paste', (e) => {
+            e.preventDefault();
+            let text = (e.clipboardData || window.clipboardData).getData('text');
+            document.execCommand('insertText', false, text);
+        });
+    </script>
+</body>
+</html>
